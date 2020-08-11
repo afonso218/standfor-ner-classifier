@@ -1,0 +1,64 @@
+
+trainFile = esp_train.tsv
+serializeTo = model/ner-conll2002-esp-model.ser.gz
+inputEncoding = iso-8859-1
+
+type=crf
+readerAndWriter=edu.stanford.nlp.sequences.ColumnDocumentReaderAndWriter
+map = word=0,answer=1
+
+#### FEATURES PARAMETERS ####
+# https://nlp.stanford.edu/nlp/javadoc/javanlp-3.5.0/edu/stanford/nlp/ie/NERFeatureFactory.html
+# Or by looking in to class NERFeatureFactory
+
+saveFeatureIndexToDisk = true
+
+useTitle=true                       # Match a word against a list of name titles (Mr, Mrs, etc.)
+useClassFeature=true                # Include a feature for the class (as a class marginal). Puts a prior on the classes which is equivalent to how often the feature appeared in the training data.
+useWord=true                        # Gives you feature for w
+useWordPairs=true                   # Gives you features for (pw, w, c) and (w, nw, c)
+
+useNGrams=true                      # Make features from letter n-grams, i.e., substrings of the word (word character ngrams will be included up to length 6 as prefixes and suffixes only)
+noMidNGrams=true                    # Do not include character n-gram features for n-grams that contain neither the beginning or end of the word
+maxNGramLeng=6                      # Having them all helps, which is the default
+
+usePrev=true                        # Gives you feature for (pw,c), and together with other options enables other previous features, such as (pt,c) [with useTags)
+useNext=true                        # Gives you feature for (nw,c), and together with other options enables other next features, such as (nt,c) [with useTags)
+useSequences=true                   # Does not use any class combination features if this is false
+usePrevSequences=true               # Does not use any class combination features using previous classes if this is false
+useLongSequences=true               # Use plain higher-order state sequences out to minimum of length or maxLeft
+maxLeft=2                           # This specifies the order of the CRF: order 1 means that features apply at most to a class pair of previous class and current class or current class and next class.
+
+useTags=true
+# useWordTag=true
+
+useOccurrencePatterns=true          # This is a very engineered feature designed to capture multiple references to names. If the current word isn't capitalized, followed by a non-capitalized word, and preceded by a word with alphabetic characters
+
+useDisjunctive=true
+disjunctionWidth=4                  # disjunctionWidth 4 is better than 5 on CoNLL data
+
+useObservedSequencesOnly=true
+
+
+#### Word Shape Features ####
+wordShape=chris2useLC               # dan2 better than chris2 on CoNLL data... (dan2useLC used on StanfordNER code)
+# wordShape=dan2useLC
+useTypeSeqs=true
+useTypeSeqs2=true
+useTypeySequences=true
+useLastRealWord=true
+useNextRealWord=true
+useReverse=false
+
+# useDisjunctiveShapeInteraction=true
+
+# QNMinimizer called on double function of x variables, using M = 25.
+useQN = true
+QNsize = 15
+
+sigma = 20
+adaptSigma = 20
+normalize = true
+normalizeTimex = true
+
+featureDiffThresh=0.05              # makes it go faster (discard features above 0.05 score)
